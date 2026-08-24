@@ -1,0 +1,323 @@
+// This is your Prisma schema file
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  PATIENT
+  DOCTOR
+  ADMIN
+}
+
+enum AppointmentStatus {
+  PENDING
+  CONFIRMED
+  COMPLETED
+  CANCELLED
+}
+
+// ==========================================
+// CORE MODELS
+// ==========================================
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String
+  role      Role     @default(PATIENT)
+  phone     String?
+  avatar    String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  doctor        Doctor?
+  appointments  Appointment[] @relation("PatientAppointments")
+  reviews       Review[]      @relation("PatientReviews")
+  healthRecords HealthRecord[] @relation("PatientHealthRecords")
+  notifications Notification[]
+  waitlistItems Waitlist[]
+  vitals        Vital[]
+  medicines     Medicine[]
+  
+  // New Relational Fields
+  dnaProfile    DNAProfile?
+  vaccinations  Vaccination[]
+  journalEntries JournalEntry[]
+  sleepLogs     SleepLog[]
+  orders        Order[]
+  transactions  Transaction[]
+  auditLogs     AuditLog[]
+  messages      Message[]
+}
+
+model Doctor {
+  id               String   @id @default(cuid())
+  userId           String   @unique
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  specialty        String
+  bio              String?
+  consultationFee  Float    @default(500)
+  availableSlots   Json     @default("{}")
+  experience       Int      @default(0)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  appointments  Appointment[] @relation("DoctorAppointments")
+  reviews       Review[]      @relation("DoctorReviews")
+  healthRecords HealthRecord[] @relation("DoctorHealthRecords")
+  waitlistItems Waitlist[]
+  cmeCredits    CMECredit[]
+}
+
+// ==========================================
+// CLINICAL MODELS
+// ==========================================
+
+model Appointment {
+  id           String            @id @default(cuid())
+  patientId    String
+  patient      User              @relation("PatientAppointments", fields: [patientId], references: [id])
+  doctorId     String
+  doctor       Doctor            @relation("DoctorAppointments", fields: [doctorId], references: [id])
+  date         String
+  timeSlot     String
+  status       AppointmentStatus @default(PENDING)
+  symptoms     String?
+  notes        String?
+  prescription Json?
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+
+  review        Review?
+  healthRecords HealthRecord[]
+  transaction   Transaction?
+
+  @@unique([doctorId, date, timeSlot])
+}
+
+model Review {
+  id            String      @id @default(cuid())
+  patientId     String
+  patient       User        @relation("PatientReviews", fields: [patientId], references: [id])
+  doctorId      String
+  doctor        Doctor      @relation("DoctorReviews", fields: [doctorId], references: [id])
+  appointmentId String      @unique
+  appointment   Appointment @relation(fields: [appointmentId], references: [id])
+  rating        Int
+  comment       String?
+  createdAt     DateTime    @default(now())
+}
+
+model HealthRecord {
+  id            String      @id @default(cuid())
+  patientId     String
+  patient       User        @relation("PatientHealthRecords", fields: [patientId], references: [id])
+  doctorId      String
+  doctor        Doctor      @relation("DoctorHealthRecords", fields: [doctorId], references: [id])
+  appointmentId String?
+  appointment   Appointment? @relation(fields: [appointmentId], references: [id])
+  fileName      String
+  filePath      String
+  fileType      String
+  createdAt     DateTime    @default(now())
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      String
+  message   String
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model Waitlist {
+  id        String   @id @default(cuid())
+  patientId String
+  patient   User     @relation(fields: [patientId], references: [id])
+  doctorId  String
+  doctor    Doctor   @relation(fields: [doctorId], references: [id])
+  date      String
+  timeSlot  String
+  createdAt DateTime @default(now())
+}
+
+model Vital {
+  id         String   @id @default(cuid())
+  patientId  String
+  patient    User     @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  type       String   // BLOOD_PRESSURE, HEART_RATE, WEIGHT, BLOOD_SUGAR, TEMPERATURE, SPO2
+  value      String
+  unit       String
+  notes      String?
+  recordedAt DateTime @default(now())
+}
+
+model Medicine {
+  id            String   @id @default(cuid())
+  patientId     String
+  patient       User     @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  name          String
+  dosage        String
+  frequency     String
+  startDate     String
+  endDate       String?
+  reminderTimes Json     @default("[]")
+  active        Boolean  @default(true)
+  createdAt     DateTime @default(now())
+}
+
+// ==========================================
+// NEW: PATIENT EXTENSIONS
+// ==========================================
+
+model DNAProfile {
+  id         String   @id @default(cuid())
+  patientId  String   @unique
+  patient    User     @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  rawDataUrl String
+  riskMarkers Json    @default("{}")
+  createdAt  DateTime @default(now())
+}
+
+model Vaccination {
+  id          String   @id @default(cuid())
+  patientId   String
+  patient     User     @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  disease     String
+  vaccineName String
+  dateAdministered DateTime
+  createdAt   DateTime @default(now())
+}
+
+model JournalEntry {
+  id          String   @id @default(cuid())
+  patientId   String
+  patient     User     @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  content     String
+  sentiment   String   // POSITIVE, NEUTRAL, NEGATIVE
+  createdAt   DateTime @default(now())
+}
+
+model SleepLog {
+  id          String   @id @default(cuid())
+  patientId   String
+  patient     User     @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  date        String
+  durationHrs Float
+  quality     Int      // 1 to 5
+  createdAt   DateTime @default(now())
+}
+
+// ==========================================
+// NEW: DOCTOR EXTENSIONS
+// ==========================================
+
+model CMECredit {
+  id          String   @id @default(cuid())
+  doctorId    String
+  doctor      Doctor   @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  courseName  String
+  credits     Float
+  dateEarned  DateTime
+  createdAt   DateTime @default(now())
+}
+
+model Message {
+  id        String   @id @default(cuid())
+  senderId  String
+  sender    User     @relation(fields: [senderId], references: [id], onDelete: Cascade)
+  content   String
+  channel   String   @default("MDT_GENERAL") // MDT_GENERAL, PATIENT_SUPPORT
+  createdAt DateTime @default(now())
+}
+
+// ==========================================
+// NEW: ADMIN / OPS MODELS
+// ==========================================
+
+model Bed {
+  id          String   @id @default(cuid())
+  ward        String   // ICU, GENERAL, MATERNITY
+  roomNumber  String
+  status      String   @default("AVAILABLE") // AVAILABLE, OCCUPIED, MAINTENANCE
+  patientId   String?  // Reference to patient if occupied
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Inventory {
+  id          String   @id @default(cuid())
+  itemName    String   @unique
+  category    String   // PPE, MEDICINE, EQUIPMENT
+  quantity    Int      @default(0)
+  reorderLevel Int     @default(10)
+  lastRestocked DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Ambulance {
+  id          String   @id @default(cuid())
+  vehicleId   String   @unique
+  status      String   @default("IDLE") // IDLE, DISPATCHED, MAINTENANCE
+  latitude    Float?
+  longitude   Float?
+  lastPing    DateTime?
+  createdAt   DateTime @default(now())
+}
+
+model VendorContract {
+  id          String   @id @default(cuid())
+  vendorName  String
+  serviceType String
+  status      String   @default("ACTIVE") // ACTIVE, EXPIRING, EXPIRED
+  expiryDate  DateTime
+  createdAt   DateTime @default(now())
+}
+
+model AuditLog {
+  id          String   @id @default(cuid())
+  userId      String?
+  user        User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  action      String
+  details     String?
+  ipAddress   String?
+  level       String   @default("INFO") // INFO, WARN, CRITICAL
+  createdAt   DateTime @default(now())
+}
+
+// ==========================================
+// NEW: BILLING & E-COMMERCE
+// ==========================================
+
+model Order {
+  id          String   @id @default(cuid())
+  patientId   String
+  patient     User     @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  items       Json     // Array of ordered pharmacy items
+  totalAmount Float
+  status      String   @default("PENDING") // PENDING, SHIPPED, DELIVERED
+  createdAt   DateTime @default(now())
+}
+
+model Transaction {
+  id            String   @id @default(cuid())
+  patientId     String
+  patient       User     @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  appointmentId String?  @unique
+  appointment   Appointment? @relation(fields: [appointmentId], references: [id], onDelete: SetNull)
+  amount        Float
+  stripeId      String?
+  status        String   @default("SUCCESS") // SUCCESS, FAILED, REFUNDED
+  fraudFlag     Boolean  @default(false)
+  createdAt     DateTime @default(now())
+}
