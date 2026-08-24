@@ -1,0 +1,28 @@
+<svg width="1400" height="64" viewBox="0 0 1400 64" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="ecgGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#0F172A" stop-opacity="0"/>
+      <stop offset="10%" stop-color="#38BDF8"/>
+      <stop offset="50%" stop-color="#3B82F6"/>
+      <stop offset="90%" stop-color="#38BDF8"/>
+      <stop offset="100%" stop-color="#0F172A" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="2.2" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <line x1="0" y1="32" x2="1400" y2="32" stroke="#1E293B" stroke-width="1" stroke-dasharray="2,6"/>
+
+  <path d="M 0,32 L 20,32 L 28,22 L 36,32 L 44,32 L 50,44 L 56,2 L 62,52 L 70,32 L 85,32 L 95,18 L 105,32 L 200,32 M 200,32 L 220,32 L 228,22 L 236,32 L 244,32 L 250,44 L 256,2 L 262,52 L 270,32 L 285,32 L 295,18 L 305,32 L 400,32 M 400,32 L 420,32 L 428,22 L 436,32 L 444,32 L 450,44 L 456,2 L 462,52 L 470,32 L 485,32 L 495,18 L 505,32 L 600,32 M 600,32 L 620,32 L 628,22 L 636,32 L 644,32 L 650,44 L 656,2 L 662,52 L 670,32 L 685,32 L 695,18 L 705,32 L 800,32 M 800,32 L 820,32 L 828,22 L 836,32 L 844,32 L 850,44 L 856,2 L 862,52 L 870,32 L 885,32 L 895,18 L 905,32 L 1000,32 M 1000,32 L 1020,32 L 1028,22 L 1036,32 L 1044,32 L 1050,44 L 1056,2 L 1062,52 L 1070,32 L 1085,32 L 1095,18 L 1105,32 L 1200,32 M 1200,32 L 1220,32 L 1228,22 L 1236,32 L 1244,32 L 1250,44 L 1256,2 L 1262,52 L 1270,32 L 1285,32 L 1295,18 L 1305,32 L 1400,32 " fill="none" stroke="url(#ecgGrad)" stroke-width="2.6"
+        stroke-linecap="round" stroke-linejoin="round" filter="url(#glow)"/>
+
+  <circle r="5" fill="#F87171" filter="url(#glow)">
+    <animateMotion dur="4.5s" repeatCount="indefinite"
+      path="M 0,32 L 20,32 L 28,22 L 36,32 L 44,32 L 50,44 L 56,2 L 62,52 L 70,32 L 85,32 L 95,18 L 105,32 L 200,32 M 200,32 L 220,32 L 228,22 L 236,32 L 244,32 L 250,44 L 256,2 L 262,52 L 270,32 L 285,32 L 295,18 L 305,32 L 400,32 M 400,32 L 420,32 L 428,22 L 436,32 L 444,32 L 450,44 L 456,2 L 462,52 L 470,32 L 485,32 L 495,18 L 505,32 L 600,32 M 600,32 L 620,32 L 628,22 L 636,32 L 644,32 L 650,44 L 656,2 L 662,52 L 670,32 L 685,32 L 695,18 L 705,32 L 800,32 M 800,32 L 820,32 L 828,22 L 836,32 L 844,32 L 850,44 L 856,2 L 862,52 L 870,32 L 885,32 L 895,18 L 905,32 L 1000,32 M 1000,32 L 1020,32 L 1028,22 L 1036,32 L 1044,32 L 1050,44 L 1056,2 L 1062,52 L 1070,32 L 1085,32 L 1095,18 L 1105,32 L 1200,32 M 1200,32 L 1220,32 L 1228,22 L 1236,32 L 1244,32 L 1250,44 L 1256,2 L 1262,52 L 1270,32 L 1285,32 L 1295,18 L 1305,32 L 1400,32 " rotate="auto"/>
+  </circle>
+</svg>
