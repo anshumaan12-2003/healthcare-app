@@ -14,13 +14,40 @@
 
 <br />
 
-<p align="center">
-  <a href="https://healthcare-app-dqw8.vercel.app"><img src="https://img.shields.io/badge/🔴_LIVE_FRONTEND-Vercel-black?style=for-the-badge&logo=vercel" alt="Live Frontend" /></a>
-  <a href="https://medicore-backend-k0dj.onrender.com"><img src="https://img.shields.io/badge/🟢_LIVE_BACKEND-Render-46E3B7?style=for-the-badge&logo=render&logoColor=white" alt="Live Backend" /></a>
-</p>
-
 <img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png" width="100%" />
 
+</div>
+
+## 🔴 LIVE DEPLOYMENT LINKS
+
+Experience the live matrix directly. Below are the official deployment endpoints for the frontend interface and the backend API:
+
+<table>
+  <tr>
+    <td align="center" width="50%">
+      <a href="https://vercel.com/me-c972/healthcare-app-dqw8/5rLGtsZeTRZmupPYX1ht3aJL5Vx5">
+        <img src="https://img.shields.io/badge/Launch_Frontend-Vercel-black?style=for-the-badge&logo=vercel&logoColor=white" alt="Vercel App" width="200"/>
+      </a>
+      <br/>
+      <br/>
+      <b>🔗 Vercel Dashboard:</b><br/>
+      <a href="https://vercel.com/me-c972/healthcare-app-dqw8/5rLGtsZeTRZmupPYX1ht3aJL5Vx5">https://vercel.com/me-c972/healthcare-app-dqw8/5rLGtsZeTRZmupPYX1ht3aJL5Vx5</a>
+    </td>
+    <td align="center" width="50%">
+      <a href="https://medicore-backend-k0dj.onrender.com">
+        <img src="https://img.shields.io/badge/Launch_API-Render-46E3B7?style=for-the-badge&logo=render&logoColor=white" alt="Render API" width="200"/>
+      </a>
+      <br/>
+      <br/>
+      <b>🔗 Render API Endpoint:</b><br/>
+      <a href="https://medicore-backend-k0dj.onrender.com">https://medicore-backend-k0dj.onrender.com</a>
+    </td>
+  </tr>
+</table>
+
+<br />
+<div align="center">
+  <img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png" width="100%" />
 </div>
 
 ## 🌌 Architectural Vision
