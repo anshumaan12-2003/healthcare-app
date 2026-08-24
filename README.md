@@ -16,6 +16,12 @@
 
 <br />
 
+### 🔴 LIVE DEPLOYMENT
+**Frontend (Vercel):** [View Live App](https://vercel.com/me-c972/healthcare-app-dqw8/5rLGtsZeTRZmupPYX1ht3aJL5Vx5)  
+**Backend API (Render):** [https://medicore-backend-k0dj.onrender.com](https://medicore-backend-k0dj.onrender.com)
+
+<br />
+
 <!-- Animated Badges -->
 <p align="center">
   <img src="https://img.shields.io/github/languages/count/anshumaan12-2003/healthcare-app?style=for-the-badge&color=090909" alt="Languages" />
