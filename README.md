@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="https://images.unsplash.com/photo-1576091160550-2173ff9e595e?auto=format&fit=crop&q=80&w=1200&h=300" alt="Minimalist Health Banner" style="border-radius: 15px; margin-bottom: 20px;" width="100%" />
+
 
 # 🏥 MediCore+
 **The Next-Generation Healthcare Ecosystem**
