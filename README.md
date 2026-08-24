@@ -2,9 +2,15 @@
 
 <img src="https://capsule-render.vercel.app/api?type=waving&color=0:0F172A,100:3B82F6&height=280&section=header&text=MediCore%2B&fontSize=90&fontColor=ffffff&animation=twinkling&fontAlignY=38&desc=Spatial%20Intelligence%20for%20Modern%20Healthcare&descAlignY=58&descSize=20" width="100%" />
 
+<img src="docs/assets/heartbeat-icon.svg" width="70" alt="beating heart" />
+
 <a href="https://github.com/anshumaan12-2003/healthcare-app">
   <img src="https://readme-typing-svg.herokuapp.com?font=Orbitron&weight=700&size=26&duration=3000&pause=900&color=38BDF8&center=true&vCenter=true&width=800&height=70&lines=AI-DRIVEN+DIAGNOSTICS;REAL-TIME+PATIENT+BIOMETRICS;3D+SPATIAL+CARE+INTERFACES;BUILT+FOR+THE+NEXT+DECADE+OF+CARE" alt="Typing SVG" />
 </a>
+
+<br/>
+
+<img src="docs/assets/ecg-divider.svg" width="100%" alt="ECG heartbeat divider" />
 
 <br/>
 
@@ -24,7 +30,7 @@
   </a>
 </p>
 
-<img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png" width="100%" />
+<img src="docs/assets/ecg-divider.svg" width="100%" alt="ECG heartbeat divider" />
 
 </div>
 
@@ -35,6 +41,9 @@
 - [Architectural Vision](#-architectural-vision)
 - [Tech Stack](#️-tech-stack)
 - [System Architecture](#-system-architecture)
+  - [High-Level System Map](#high-level-system-map)
+  - [Real-Time Vitals Pipeline](#-real-time-vitals-pipeline)
+  - [Deployment Topology](#️-deployment-topology)
 - [Feature Matrix](#️-feature-matrix)
 - [Getting Started](#-getting-started)
 - [Environment Variables](#-environment-variables)
@@ -74,36 +83,105 @@
 
 ## 🧩 System Architecture
 
+<p align="center"><img src="docs/assets/heartbeat-icon.svg" width="34" alt="pulse" /></p>
+
+### High-Level System Map
+
 ```mermaid
+%%{init: {'theme':'base', 'themeVariables': {
+  'primaryColor':'#1E293B','primaryTextColor':'#E2E8F0','primaryBorderColor':'#38BDF8',
+  'lineColor':'#38BDF8','secondaryColor':'#0F172A','tertiaryColor':'#0F172A',
+  'fontFamily':'Trebuchet MS'}}}%%
 flowchart LR
-    subgraph Client["Frontend — React + R3F"]
+    subgraph Client["🖥️ Frontend — React + R3F"]
         UI[Patient / Doctor / Admin Dashboards]
+        SCENE[3D Scenes — React Three Fiber]
         WS_C[WebSocket Client]
     end
 
-    subgraph Server["Backend — Node.js + Express"]
+    subgraph Server["⚙️ Backend — Node.js + Express"]
         API[REST API]
+        AUTH[Auth & RBAC Middleware]
         WS_S[WebSocket Gateway]
-        AUTH[Auth & RBAC]
+        SVC[Domain Services]
     end
 
-    subgraph Data["Data Layer"]
+    subgraph Data["🗄️ Data Layer"]
         PG[(PostgreSQL via Prisma)]
     end
 
-    subgraph External["External Services"]
+    subgraph External["🔌 External Services"]
         MQTT[MQTT Broker — IoT Telemetry]
         RTC[WebRTC — Tele-Robotics]
         MAP[Mapbox GL — Fleet Tracking]
     end
 
     UI --> API
+    UI --> SCENE
     WS_C <--> WS_S
-    API --> AUTH --> PG
-    WS_S --> PG
-    Server <--> MQTT
-    Server <--> RTC
-    Server <--> MAP
+    API --> AUTH --> SVC --> PG
+    WS_S --> SVC
+    SVC <--> MQTT
+    SVC <--> RTC
+    SVC <--> MAP
+
+    classDef client fill:#1E3A8A,stroke:#38BDF8,color:#E0F2FE
+    classDef server fill:#134E4A,stroke:#2DD4BF,color:#CCFBF1
+    classDef data fill:#4C1D95,stroke:#A78BFA,color:#EDE9FE
+    classDef ext fill:#7C2D12,stroke:#FB923C,color:#FFEDD5
+    class UI,SCENE,WS_C client
+    class API,AUTH,WS_S,SVC server
+    class PG data
+    class MQTT,RTC,MAP ext
+```
+
+<br/>
+
+### 🫀 Real-Time Vitals Pipeline
+
+The pulse motif isn't just decoration — it mirrors how live data actually moves through the system: a sensor reading travels from device to dashboard in under a second, the same way a heartbeat propagates through an ECG trace.
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': {
+  'primaryColor':'#1E293B','primaryTextColor':'#E2E8F0','primaryBorderColor':'#F87171',
+  'lineColor':'#F87171','actorBkg':'#0F172A','actorBorder':'#38BDF8','actorTextColor':'#E2E8F0',
+  'signalColor':'#38BDF8','signalTextColor':'#E2E8F0'}}}%%
+sequenceDiagram
+    participant Sensor as 📟 Bedside / Wearable Sensor
+    participant Broker as 📡 MQTT Broker
+    participant Backend as ⚙️ Express + WS Gateway
+    participant DB as 🗄️ PostgreSQL
+    participant Dash as 🖥️ Doctor / Admin Dashboard
+
+    Sensor->>Broker: publish(vitals: HR, SpO2, BP)
+    Broker->>Backend: forward telemetry event
+    Backend->>DB: persist reading (Prisma)
+    Backend-->>Dash: emit over WebSocket (live)
+    Dash->>Dash: animate ECG waveform + trigger alerts
+    alt reading out of safe range
+        Backend-->>Dash: push critical alert
+        Dash->>Dash: flag patient in Command Center
+    end
+```
+
+<br/>
+
+### ☁️ Deployment Topology
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': {
+  'primaryColor':'#1E293B','primaryTextColor':'#E2E8F0','primaryBorderColor':'#38BDF8',
+  'lineColor':'#38BDF8'}}}%%
+flowchart TB
+    DEV[Local Dev — Docker Compose] -->|git push| GH[GitHub Repo]
+    GH -->|CI: lint + test| CI[GitHub Actions]
+    CI -->|deploy| VC[Vercel — Frontend]
+    CI -->|deploy| RD[Render — Backend + WS Gateway]
+    RD --> DB[(Render Postgres)]
+    VC -->|HTTPS / WSS| RD
+
+    classDef pipe fill:#0F172A,stroke:#38BDF8,color:#E2E8F0
+    class DEV,GH,CI,VC,RD,DB pipe
 ```
 
 <br/>
@@ -157,7 +235,7 @@ flowchart LR
 
 > 💡 Replace the `docs/assets/*.gif` placeholders above with real screen recordings of each dashboard (e.g. via [ScreenToGif](https://www.screentogif.com/) or `ffmpeg`) — recruiters and visitors trust real product footage far more than stock gifs.
 
-<img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png" width="100%" />
+<img src="docs/assets/ecg-divider.svg" width="100%" alt="ECG heartbeat divider" />
 
 <br/>
 
